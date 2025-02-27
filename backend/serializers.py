@@ -30,3 +30,18 @@ class PatientSerializer(serializers.ModelSerializer):
             setattr(instance, attr, value)
         instance.save()
         return instance
+
+class AppointmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = '__all__'
+        
+    def update(self, instance, validated_data):
+        allowed_fields = ['appointment_datetime']
+
+        for attr, value in validated_data.items():
+            if attr not in allowed_fields:
+                raise serializers.ValidationError(f'Campo {attr} não pode ser atualizado.')
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
