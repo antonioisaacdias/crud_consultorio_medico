@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Professional
+from .models import Professional, Patient, Appointment
 
 class ProfessionalSerializer(serializers.ModelSerializer):
     class Meta:
@@ -7,11 +7,25 @@ class ProfessionalSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
     def update(self, instance, validated_data):
-        
-        allowed_fiels = ['name', 'email', 'crm', 'specialty']
+        allowed_fields = ['name', 'email', 'crm', 'specialty']
         
         for attr, value in validated_data.items():
-            if attr not in allowed_fiels:
+            if attr not in allowed_fields:
+                raise serializers.ValidationError(f'Campo {attr} não pode ser atualizado.')
+            setattr(instance, attr, value)
+        instance.save()
+        return instance
+    
+class PatientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Patient
+        fields = '__all__'
+    
+    def update(self, instance, validated_data):
+        allowed_fields = ['name', 'email', 'address', 'phone', 'cpf', 'birth_date']
+        
+        for attr, value in validated_data.items():
+            if attr not in allowed_fields:
                 raise serializers.ValidationError(f'Campo {attr} não pode ser atualizado.')
             setattr(instance, attr, value)
         instance.save()
