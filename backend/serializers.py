@@ -8,7 +8,7 @@ class ProfessionalSerializer(serializers.ModelSerializer):
         
     def update(self, instance, validated_data):
         
-        allowed_fiels = ['name', 'email', 'crm']
+        allowed_fiels = ['name', 'email', 'crm', 'specialty']
         
         for attr, value in validated_data.items():
             if attr not in allowed_fiels:
