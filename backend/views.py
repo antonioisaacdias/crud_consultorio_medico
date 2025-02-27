@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Professional, Patient, Appointment
-from .serializers import ProfessionalSerializer, PatientSerializer
+from .serializers import ProfessionalSerializer, PatientSerializer, AppointmentSerializer
 
 @api_view(['GET', 'POST'])
 def professionals(request):
@@ -75,4 +75,18 @@ def patients_detail(request, pk):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+def appointments(request):
+    if request.method == 'GET':
+        appointments = Appointment.objects.all()
+        serializer = AppointmentSerializer(appointments, many=True)
+        return Response(serializer.data)
+    
+    elif request.method == 'POST':
+        serializer = AppointmentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message' : 'Médico cadastrado com sucesso!'}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
