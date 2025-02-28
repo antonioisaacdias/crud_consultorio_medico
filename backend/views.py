@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import Professional, Patient, Appointment
 from .serializers import ProfessionalSerializer, PatientSerializer, AppointmentSerializer
+from datetime import datetime
 
 @api_view(['GET', 'POST'])
 def professionals(request):
@@ -113,14 +114,24 @@ def appointments_detail(request, pk):
         
 
 @api_view(['GET'])
-def professional_appointments(request, pk):
-    pass
+def professional_appointments(request, professional_pk):
+    appointments = Appointment.objects.filter(professional_id=professional_pk)
+    serializer = AppointmentSerializer(appointments, many=True)
+    return Response(serializer.data)
 
 @api_view(['GET'])
-def patient_appointments(request, pk):
-    pass
+def patient_appointments(request, patient_pk):
+    appointments = Appointment.objects.filter(patient_id=patient_pk)
+    serializer = AppointmentSerializer(appointments, many=True)
+    return Response(serializer.data)
 
 @api_view(['GET'])
-def appointments_by_date(request, datetime):
-    pass
+def appointments_by_date(request, date):
+    try:
+        date_obj = datetime.strptime(date, '%Y-%m-%d').date()
+    except ValueError:
+        return Response({"error": "Formato de data inválido. Use AAAA-MM-DD."}, status=status.HTTP_400_BAD_REQUEST)
+    appointments = Appointment.objects.filter(appointment_datetime__date=date_obj)
+    serializer = AppointmentSerializer(appointments, many=True)
+    return Response(serializer.data)
     
