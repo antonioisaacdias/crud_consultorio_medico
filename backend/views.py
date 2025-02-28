@@ -88,5 +88,39 @@ def appointments(request):
         serializer = AppointmentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'message' : 'Médico cadastrado com sucesso!'}, status=status.HTTP_201_CREATED)
+            return Response({'message' : 'Consulta agendada com sucesso!'}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PATCH', 'DELETE'])
+def appointments_detail(request, pk):
+    if request.method == 'GET':
+        appointment = Appointment.objects.get(id=pk)
+        serializer = AppointmentSerializer(appointment)
+        return Response(serializer.data)
+    
+    if request.method == 'DELETE':
+        appointment = Appointment.objects.get(id=pk)
+        appointment.delete()
+        return Response({'message': 'Excluído com sucesso!'}, status=status.HTTP_204_NO_CONTENT)
+    
+    if request.method == 'PATCH':
+        appointment = Appointment.objects.get(id=pk)
+        serializer = AppointmentSerializer(appointment, data=request.data, partial=True)
+        
+        if serializer.is_valid():
+            serializer.update(appointment, serializer.validated_data)
+            return Response({'message': 'Informações atualizadas com sucesso!'}, status=status.HTTP_200_OK)
+        
+
+@api_view(['GET'])
+def professional_appointments(request, pk):
+    pass
+
+@api_view(['GET'])
+def patient_appointments(request, pk):
+    pass
+
+@api_view(['GET'])
+def appointments_by_date(request, datetime):
+    pass
+    
