@@ -16,31 +16,37 @@ def professionals(request):
         if serializer.is_valid():
             serializer.save()
             return Response({'message' : 'Médico cadastrado com sucesso!'}, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'PATCH', 'DELETE'])
 def professionals_detail(request, pk):
     if request.method == 'GET':
-        professional = Professional.objects.get(id=pk)
+        try:
+            professional = Professional.objects.get(id=pk)
+        except:
+            return Response({'message': 'Médico não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
         serializer = ProfessionalSerializer(professional)
         return Response(serializer.data)
     
     elif request.method == 'DELETE':
-        professional = Professional.objects.get(id=pk)
+        try:
+            professional = Professional.objects.get(id=pk)
+        except:
+            return Response({'message': 'Médico não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
         professional.delete()
         return Response({'message': 'Excluído com sucesso!'}, status=status.HTTP_204_NO_CONTENT)
     
     elif request.method == 'PATCH':
-        professional = Professional.objects.get(id=pk)
+        try:
+            professional = Professional.objects.get(id=pk)
+        except:
+            return Response({'message': 'Médico não encontrado.'}, status=status.HTTP_404_NOT_FOUND)
         serializer = ProfessionalSerializer(professional, data=request.data, partial=True)
-        
         if serializer.is_valid():
             serializer.update(professional, serializer.validated_data)
             return Response({'message': 'Informações atualizadas com sucesso!'}, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST'])
 def patients(request):
@@ -59,15 +65,26 @@ def patients(request):
 @api_view(['GET', 'PATCH','DELETE'])
 def patients_detail(request, pk):
     if request.method == 'GET':
-        patient = Patient.objects.get(id=pk)
+        try:
+            patient = Patient.objects.get(id=pk)
+        except:
+            return Response({'message': 'Paciente não encontrado.'}, status=status.HTTP_404_NOT_FOUND)       
         serializer = PatientSerializer(patient)
         return Response(serializer.data)
+    
     elif request.method == 'DELETE':
-        patient = Patient.objects.get(id=pk)
+        try:
+            patient = Patient.objects.get(id=pk)
+        except:
+            return Response({'message': 'Paciente não encontrado.'}, status=status.HTTP_404_NOT_FOUND) 
         patient.delete()
         return Response({'message': 'Excluído com sucesso!'}, status=status.HTTP_204_NO_CONTENT)
+    
     elif request.method == 'PATCH':
-        patient = Patient.objects.get(id=pk)
+        try:
+            patient = Patient.objects.get(id=pk)
+        except:
+            return Response({'message': 'Paciente não encontrado.'}, status=status.HTTP_404_NOT_FOUND) 
         serializer = PatientSerializer(patient, data=request.data, partial=True)
         
         if serializer.is_valid():
@@ -76,8 +93,6 @@ def patients_detail(request, pk):
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 @api_view(['GET', 'POST'])
 def appointments(request):
     if request.method == 'GET':
@@ -95,24 +110,32 @@ def appointments(request):
 @api_view(['GET', 'PATCH', 'DELETE'])
 def appointments_detail(request, pk):
     if request.method == 'GET':
-        appointment = Appointment.objects.get(id=pk)
+        try:
+            appointment = Appointment.objects.get(id=pk)
+        except:
+            return Response({'message': 'Consulta não encontrada.'}, status=status.HTTP_404_NOT_FOUND)
         serializer = AppointmentSerializer(appointment)
         return Response(serializer.data)
     
     if request.method == 'DELETE':
-        appointment = Appointment.objects.get(id=pk)
+        try:
+            appointment = Appointment.objects.get(id=pk)
+        except:
+            return Response({'message': 'Consulta não encontrada.'}, status=status.HTTP_404_NOT_FOUND)
         appointment.delete()
         return Response({'message': 'Excluído com sucesso!'}, status=status.HTTP_204_NO_CONTENT)
     
     if request.method == 'PATCH':
-        appointment = Appointment.objects.get(id=pk)
+        try:
+            appointment = Appointment.objects.get(id=pk)
+        except:
+            return Response({'message': 'Consulta não encontrada.'}, status=status.HTTP_404_NOT_FOUND)
         serializer = AppointmentSerializer(appointment, data=request.data, partial=True)
         
         if serializer.is_valid():
             serializer.update(appointment, serializer.validated_data)
             return Response({'message': 'Informações atualizadas com sucesso!'}, status=status.HTTP_200_OK)
         
-
 @api_view(['GET'])
 def professional_appointments(request, professional_pk):
     appointments = Appointment.objects.filter(professional_id=professional_pk)
